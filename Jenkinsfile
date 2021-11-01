@@ -1,30 +1,30 @@
 def commit_id
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage("preparation"){
-            steps{
-                echo "getting commit id ...."
-                sh "git rev-parse --short HEAD > .git/commit_id"
+    stages {
+        stage('preparation') {
+            steps {
+                checkout scm
+                sh "git rev-parse --short HEAD > .git/commit-id"
                 script {
-                    commit_id = readFile('.git/commit_id').trim()
+                    commit_id = readFile('.git/commit-id').trim()
                 }
             }
         }
-        stage("code build"){
-            steps{
-                echo "building ....."
+        stage ('build') {
+            steps {
+                echo 'building maven workload'
                 sh "mvn clean install"
-                echo "building finished"
+                echo 'build complete'
             }
         }
-        stage("containerisation"){
-            steps{
-                echo "building docker images ....."
-                sh "docker build -t positionsim:$commit_id ."
-                echo "building finished"
+
+        stage ("image build") {
+            steps {
+                echo 'building docker image'
+                sh "docker build -t 2alinfo7/position-simulator:${commit_id} ."
+                echo 'docker image built'
             }
         }
     }
-
 }
