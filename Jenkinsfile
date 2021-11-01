@@ -11,7 +11,6 @@ pipeline{
                 }
             }
         }
-    stages{
         stage("code build"){
             steps{
                 echo "building ....."
